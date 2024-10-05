@@ -1,20 +1,106 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+<ion-menu contentId="main-content">
+  <ion-header>
+    <ion-toolbar color="tertiary">
+      <ion-title>Menu Contenido</ion-title>
     </ion-toolbar>
   </ion-header>
+  <ion-content class="ion-padding">
+    <ion-item (click)="setOpen(true)"> Pokemon Información </ion-item>
+    <img
+      style="position: relative; top: 50px"
+      src="assets/pokemon.jpg"
+      alt="Logo"
+    />
+  </ion-content>
+</ion-menu>
+<ion-modal [isOpen]="isModalOpen">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Modal Información</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="setOpen(false)">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <p>
+        Pokémon es una franquicia de entretenimiento creada por Satoshi Tajiri
+        en 1996, centrada en criaturas llamadas "Pokémon", que los humanos
+        capturan y entrenan para luchar entre sí. El jugador asume el papel de
+        un entrenador Pokémon y viaja por diversas regiones capturando Pokémon,
+        luchando contra otros entrenadores y completando una Pokédex, una
+        enciclopedia virtual de las especies capturadas. La serie incluye
+        videojuegos, series animadas, películas, cartas coleccionables y más. Su
+        lema principal es "¡Atrápalos a todos!" y ha sido uno de los fenómenos
+        culturales más grandes a nivel global.
+      </p>
+    </ion-content>
+  </ng-template>
+</ion-modal>
+<div class="ion-page" id="main-content">
+  <ion-header>
+    <ion-toolbar color="tertiary">
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>Menu</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content [fullscreen]="true">
+    <ion-searchbar
+      placeholder="Buscar Pokemon"
+      (ionChange)="onSearchChange($event)"
+    ></ion-searchbar>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
-</ion-content>
+    <ion-list *ngIf="pokemons.length === 0">
+      <ion-item *ngFor="let i of [1,2,3,4,5]">
+        <ion-avatar slot="start">
+          <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+        </ion-avatar>
+        <ion-label class="ion-text-capitalize">
+          <h3>
+            <ion-skeleton-text
+              [animated]="true"
+              style="width: 80%"
+            ></ion-skeleton-text>
+          </h3>
+          <p>
+            <ion-skeleton-text
+              [animated]="true"
+              style="width: 60%"
+            ></ion-skeleton-text>
+          </p>
+          <p>
+            <ion-skeleton-text
+              [animated]="true"
+              style="width: 30%"
+            ></ion-skeleton-text>
+          </p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-list>
+      <ion-item
+        *ngFor="let pokemon of pokemons"
+        [routerLink]="['/pokemon-details', pokemon.pokeIndex]"
+      >
+        <ion-avatar slot="start">
+          <img [src]="pokemon.image" />
+        </ion-avatar>
+        <ion-label class="ion-text-capitalize">
+          <h2>{{ pokemon.name }}</h2>
+          <p>Pokemon #{{ pokemon.pokeIndex }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-infinite-scroll (ionInfinite)="loadPokemon(true, $event)">
+      <ion-infinite-scroll-content
+        loadingText="Cargando Pokemon..."
+        loadingSpinner="bubbles"
+      ></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </ion-content>
+</div>
